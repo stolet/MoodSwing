@@ -7,8 +7,8 @@ import re
 import pandas as pd
 import pdb
 
-RAVDESS = "data/ravdess/"
-BERLIN = "data/berlin/wav/"
+RAVDESS = "../data/ravdess/"
+BERLIN = "../data/berlin/wav/"
 AUDIO = 0
 SAMPLING_RATE = 1
 EMOTION = 2
@@ -35,12 +35,18 @@ MFCC = 5
 
 class Dataset():
     def __init__(self):
-        self.data = np.array(0, dtype=object)
+        self.berlin_data = None
+        self.ravdess_data = None
         self.feature_names = ["audio", "sampling_rate", "emotion", "actor", "gender"]
         
     def load(self, path):
         n = Dataset._get_num_files(path)
-        temp = np.zeros(n, dtype=object)
+
+        if path == RAVDESS:
+            self.ravdess_data = np.zeros(n, dtype=object)
+        elif path == BERLIN:
+            self.berlin_data = np.zeros(n, dtype=object)
+        
         i = 0
         for filename in glob.iglob(path + "**", recursive=True):
             if ".wav" in filename:
@@ -63,11 +69,16 @@ class Dataset():
                 element["actor"] = actor
                 element["gender"] = gender
                 element["mfcc"] = mfcc
-                temp[i] = element
+                if path == RAVDESS:
+                    self.ravdess_data[i] = element
+                elif path == BERLIN:
+                    self.berlin_data[i] = element
                 i += 1
-                
-        self.data = np.append(self.data, temp)
-
+     
+    def save_data(self):
+        np.save("./clean_data/ravdess_clean", self.ravdess_data)
+        np.save("./clean_data/berlin_clean", self.berlin_data)
+    
     @staticmethod
     def _get_num_files(path):
         total = 0
@@ -121,3 +132,4 @@ if __name__ == "__main__":
     dataset = Dataset()
     dataset.load(RAVDESS)
     dataset.load(BERLIN)
+    dataset.save_data()
