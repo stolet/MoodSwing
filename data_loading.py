@@ -14,6 +14,7 @@ SAMPLING_RATE = 1
 EMOTION = 2
 ACTOR = 3
 GENDER = 4
+MFCC = 5
 
 # Possible Emotions
 #  - Neutral
@@ -43,9 +44,15 @@ class Dataset():
         i = 0
         for filename in glob.iglob(path + "**", recursive=True):
             if ".wav" in filename:
-                element = {"audio": None, "sampling_rate": None, "emotion": None, "actor": None, "gender": None}
+                element = { "audio": None, 
+                            "sampling_rate": None, 
+                            "emotion": None, 
+                            "actor": None, 
+                            "gender": None,
+                            "mfcc": None }
 
                 audio, sampling_rate = librosa.load(filename)
+                mfcc = librosa.feature.mfcc(y=audio, sr=sampling_rate, n_mfcc=12)
                 emotion = Dataset._get_emotion(filename, path)
                 actor = Dataset._get_actor(filename, path)
                 gender = Dataset._get_gender(filename, path)
@@ -55,14 +62,11 @@ class Dataset():
                 element["emotion"] = emotion
                 element["actor"] = actor
                 element["gender"] = gender
+                element["mfcc"] = mfcc
                 temp[i] = element
                 i += 1
-            if i == 5:
-                break;
+                
         self.data = np.append(self.data, temp)
-
-
-
 
     @staticmethod
     def _get_num_files(path):
