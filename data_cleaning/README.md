@@ -1,4 +1,4 @@
-Progress so far
+Nov 8, 2019 Progress Report
 
 Data:
 We have done some data exploration along the lines of strucutre,
@@ -20,11 +20,11 @@ extracted the MFCC of each audio track and saved the new data structures
 with the MFCC and standardized features into a binary file in numpy format
 for fast loading. The data then is parsed into X and y for simple analysis
 of the MFCC to do classifcation of emotion so we can explore the model's
-responsiveness to changing of features. 
+responsiveness to changing of features. The data is then brought into a PyTorch dataloader
+for batching and randomization.
 
-The data is then brought into a PyTorch dataloader for batching and randomization.
+Model: 
 A CNN based classication model is used for training and inference, but this is not
 fully completed yet. We hope to get the CNN quickly finished so we can proceed to style
 transfer.
-
 
