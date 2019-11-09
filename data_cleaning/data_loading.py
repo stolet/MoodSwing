@@ -9,6 +9,7 @@ import pdb
 
 RAVDESS = "../data/ravdess/"
 BERLIN = "../data/berlin/wav/"
+
 AUDIO = 0
 SAMPLING_RATE = 1
 EMOTION = 2
