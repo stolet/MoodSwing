@@ -132,3 +132,4 @@ dmypy.json
 #custom
 data/
 clean_data/
+.idea/
