@@ -2,7 +2,7 @@ Nov 8, 2019 Progress Report
 
 Data:
 We have done some data exploration along the lines of strucutre,
-lenght of audio samples, and distrubtion. The data has gone through
+lenght of audio samples, and distribution. The data has gone through
 cleaning, so that we can work withthe RAVDESS and Berlin dataset.
 
 Both datasets used the filename to encode various like emotion, actor and gender.
