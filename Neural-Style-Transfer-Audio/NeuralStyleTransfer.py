@@ -66,12 +66,13 @@ class StyleLoss(nn.Module):
 
 if __name__ == '__main__':
 	#print('Enter the names of SCRIPT, Content audio, Style audio')
-	script, content_audio_name , style_audio_name = '', 'in/alpha.wav', 'in/beta.wav'
+	script, content_audio_name , style_audio_name = '', '../data/ravdess/Actor_01/03-01-01-01-01-01-01.wav', '../data/ravdess/Actor_01/03-01-05-02-01-01-01.wav'
+	# script, content_audio_name , style_audio_name = '', 'in/alpha.wav', 'in/beta.wav'
 
 	# USING LIBROSA
 	N_FFT=2048
 	def read_audio_spectum(filename):
-		x, fs = librosa.load(filename, duration=58.04) # Duration=58.05 so as to make sizes convenient
+		x, fs = librosa.load(filename, duration=3.2) # Duration=58.05 so as to make sizes convenient
 		S = librosa.stft(x, N_FFT)
 		p = np.angle(S)
 		S = np.log1p(np.abs(S))  
