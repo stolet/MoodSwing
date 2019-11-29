@@ -12,7 +12,7 @@ TARGET_IMG_EXT = ".PNG"  # PIL auto makes the file based on extension type
 def image_loader(image_path: str) -> np.ndarray:
     audio, samp_rate = librosa.load(image_path, sr=None)
     stft = librosa.core.stft(audio)
-    mag = np.abs(stft)  # magnitude
+    mag = np.abs(stft).T  # magnitude, transpose since output would be 1025x310 otherwise
     print(mag.shape)
     return mag
 
@@ -21,7 +21,7 @@ def image_loader(image_path: str) -> np.ndarray:
 for root, dirs, files in os.walk(SRC_PATH):
     for filename in files:
         image_np = image_loader(os.path.join(root, filename))
-        image = Image.fromarray(image_np.astype('uint8'))
+        image = Image.fromarray((image_np * 255).astype('uint8'))
 
         # make folder
         emotion = filename.split('-')[2]
