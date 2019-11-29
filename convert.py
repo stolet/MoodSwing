@@ -10,7 +10,7 @@ TARGET_IMG_EXT = ".PNG"  # PIL auto makes the file based on extension type
 
 
 def image_loader(image_path: str) -> np.ndarray:
-    audio, samp_rate = librosa.load(image_path, sr=None)
+    audio, samp_rate = librosa.load(image_path, sr=None) #uses 2048 fft bins
     stft = librosa.core.stft(audio)
     mag = np.abs(stft).T  # magnitude, transpose since output would be 1025x310 otherwise
     print(mag.shape)
