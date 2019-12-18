@@ -1,5 +1,7 @@
-#converts wave files to spectrograms
+# converts wave files to spectrograms
 from PIL import Image
+from typing import Tuple
+
 
 import librosa
 import soundfile as sf
@@ -11,39 +13,39 @@ TARGET_PATH = "cyclegan-qp/samples/audio/"
 TARGET_IMG_EXT = ".wav"  # PIL auto makes the file based on extension type
 
 
-def image_loader(image_path: str) -> np.ndarray:
+def audio_to_img(image_path: str) -> Tuple[np.ndarray, int]:
+    y, sr = librosa.load(image_path, sr=None)  # uses 2048 fft bins
+    mel = librosa.feature.melspectrogram(y)
+    mel = np.abs(mel)
+    mel *= 255 / mel.max()
+    mel = mel.astype('uint8')
+    return mel, sr
 
-    audio, samp_rate = librosa.load(image_path, sr=None) #uses 2048 fft bins
-    stft = librosa.core.stft(audio)
-    mag = np.abs(stft).T  # magnitude, transpose since output would be 1025x310 otherwise
-    print(mag.shape)
-    return mag
 
-def img2sound(fp):
+def img_to_audio(fp: str, sr: int, write_path=None) -> np.ndarray:
     im = Image.open(fp).convert('L')
-    im_np = np.array(im)
-    audio = librosa.core.istft(im_np)
-    # audio_file = open(TARGET_PATH + "sty.wav", "w+")
-    #sf.write(TARGET_PATH + "sty.wav", audio, 48000)
-    librosa.output.write_wav(TARGET_PATH + 'rec.wav', audio, 48000)
-    # audio_file.close()
+    im_np = np.array(im).astype('float64')
+    print(im_np.shape)
+    audio = librosa.feature.inverse.mel_to_audio(im_np)
+    if write_path:
+        librosa.output.write_wav(write_path, audio, sr)
+    return audio
 
 
-# /data/ravdess/Actor_01/03-01-03-01-01-01-01.wav
-for root, dirs, files in os.walk(SRC_PATH):
-    for filename in files:
-        img_path = os.path.join(root, filename)
-        print(img_path)
-        sound = img2sound(img_path)
-        # image_np = image_loader(os.path.join(root, filename))
-        # image = Image.fromarray((image_np * 255).astype('uint8'))
-        #
-        # # make folder
-        # emotion = filename.split('-')[2]
-        # folder_path = os.path.join(TARGET_PATH, emotion)
-        # os.makedirs(folder_path, exist_ok=True)
+def save_image(image_np: np.ndarray, save_path: str) -> None:
+    image = Image.fromarray(image_np)
+    image.save(save_path)
 
-        # save
-        # name_without_ext = os.path.splitext(filename)[0]
-        #
-        # image.save(os.path.join(folder_path, name_without_ext + TARGET_IMG_EXT))  # remove the extension
+
+def demo():
+    import tempfile
+    img_contents, sr = audio_to_img('../data/ravdess/Actor_01/03-01-01-01-01-01-01.wav')  # neut
+    #     img_contents, sr = audio_to_img('../data/ravdess/Actor_01/03-01-05-01-01-01-01.wav')
+    fp_img = '/tmp/dump.png'
+    save_image(img_contents, fp_img)
+    audio = img_to_audio(fp_img, sr, write_path=None)
+    #     print(audio.shape)
+    return display.Audio(audio, rate=sr)
+
+
+demo()
